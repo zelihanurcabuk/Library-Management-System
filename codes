@@ -1,0 +1,96 @@
+class Library:
+    def __init__(self, filepath):
+        self.filepath = filepath
+        self.books = self.load_books()
+
+    def load_books(self):
+        try:
+            with open(self.filepath, 'r') as file:
+                books = file.read().splitlines()
+        except FileNotFoundError:
+            with open(self.filepath, 'w') as file:
+                pass
+            books = []
+        return books
+
+    def list_books(self):
+        if not self.books:
+            print("No books in the library.")
+        else:
+            for book in self.books:
+                name, author, release_date, pages = book.split(', ')
+                print(f"Name: {name}, Author: {author}")
+
+    def book_exists(self, name):
+        return any(book.startswith(name) for book in self.books)
+
+    def add_book(self, name, author, release_date, pages):
+        if self.book_exists(name):
+            print("Book already exists in the library.")
+            return
+        
+        with open(self.filepath, 'a+') as file:
+            file.write(f"{name}, {author}, {release_date}, {pages}\n")
+        self.books.append(f"{name}, {author}, {release_date}, {pages}")
+        print("Book added successfully.")
+
+    def remove_book(self, title):
+        if not self.books:
+            print("No books in the library to remove.")
+            return
+
+        book_found = False
+        updated_books = []
+        for book in self.books:
+            if not book.startswith(title):
+                updated_books.append(book)
+            else:
+                book_found = True
+
+        self.books = updated_books
+        with open(self.filepath, 'w') as file:
+            for book in self.books:
+                file.write(f"{book}\n")
+
+        if not book_found:
+            print("Book not found in the library.")
+        else:
+            print("Book removed successfully.")
+
+def run_library_menu(library):
+    while True:
+        print("\n*** MENU ***")
+        print("1) List Books")
+        print("2) Add Book")
+        print("3) Remove Book")
+        print("4) Exit")
+
+        choice = input("Please enter your choice (1-4): ")
+
+        if choice == "1":
+            library.list_books()
+        elif choice == "2":
+            name = input("Enter book name: ")
+            if library.book_exists(name):
+                print("Book already exists in the library. Please add books with unique names.")
+                continue  # Skips asking for more details and goes back to the menu
+            author = input("Enter author name: ")
+            release_date = input("Enter release date (Year): ")
+            pages = input("Enter number of pages: ")
+            library.add_book(name, author, release_date, pages)
+        elif choice == "3":
+            if not library.books:
+                print("No books in the library to remove.")
+            else:
+                title = input("Enter the title of the book to remove: ")
+                library.remove_book(title)
+        elif choice == "4":
+            print("Exiting program...")
+            break
+        else:
+            print("Invalid choice. Please enter a number between 1 and 4.")
+
+if __name__ == "__main__":
+    filepath = "books.txt"  # Adjust the filepath as needed for your environment
+    lib = Library(filepath)
+    run_library_menu(lib)
