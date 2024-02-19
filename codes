@@ -73,7 +73,7 @@ def run_library_menu(library):
             name = input("Enter book name: ")
             if library.book_exists(name):
                 print("Book already exists in the library. Please add books with unique names.")
-                continue  # Skips asking for more details and goes back to the menu
+                continue  
             author = input("Enter author name: ")
             release_date = input("Enter release date (Year): ")
             pages = input("Enter number of pages: ")
@@ -91,6 +91,6 @@ def run_library_menu(library):
             print("Invalid choice. Please enter a number between 1 and 4.")
 
 if __name__ == "__main__":
-    filepath = "books.txt"  # Adjust the filepath as needed for your environment
+    filepath = "books.txt" 
     lib = Library(filepath)
     run_library_menu(lib)
